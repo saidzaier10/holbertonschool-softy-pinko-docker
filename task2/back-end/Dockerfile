@@ -1,19 +1,23 @@
+# Utiliser la dernière version d'Ubuntu comme image de base
 FROM ubuntu:latest
 
-# Update and install Python3 and pip
-RUN apt-get update && apt-get install -y python3 python3-pip
+# Mettre à jour APT et mettre à niveau les packages installés
+RUN apt-get update && apt-get upgrade -y
 
-# Install Flask
-RUN pip3 install flask
+# Installer Python3 et pip3
+RUN apt-get install -y python3 python3-pip
 
-# Set working directory
-WORKDIR /app
+# Supprimer le fichier EXTERNALLY-MANAGED s'il est présent
+RUN rm /usr/lib/python*/EXTERNALLY-MANAGED || true
 
-# Copy the API file
-COPY api.py /app
+# Installer Flask à l'aide de pip3
+RUN pip3 install Flask
 
-# Expose port 5252
+# Copier le script API dans le conteneur
+COPY api.py /opt/api.py
+
+# Exposer le port sur lequel l'application s'exécutera
 EXPOSE 5252
 
-# Run the Flask application
-CMD ["python3", "api.py"]
+# Définir la commande pour exécuter le serveur Flask
+CMD ["python3", "/opt/api.py"]
